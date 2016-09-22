@@ -11,8 +11,6 @@ ver = '0.1.0'
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
 
-FNULL = open(os.devnull, 'w')
-
 @bot.event
 async def on_ready():
     print('Starting {} v{}...'.format(name, ver))
@@ -24,7 +22,8 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     if (message.content.startswith('!magisk') or
-        message.content.startswith('!heltmagisk')):
+        message.content.startswith('!heltmagisk') or 
+        message.content.startswith('!nairn')):
 
         chan = message.author.voice_channel
         now = datetime.datetime.now()
@@ -34,13 +33,14 @@ async def on_message(message):
         voice = await bot.join_voice_channel(chan)
         song = afterski_short
 
+        if (message.content.startswith('!nairn')):
+            song = nairn
         if (message.content.startswith('!heltmagisk')):
             song = afterski_long
 
         event = threading.Event()
         player = voice.create_ffmpeg_player(
-                song, after=lambda: event.set(), 
-                stderr=FNULL)
+                song, after=lambda: event.set())
         player.start()
 
         try:
@@ -60,6 +60,7 @@ dir = os.path.dirname(__file__)
 filename = os.path.join(dir, '../.bot-token')
 afterski_long = os.path.join(dir, '../afterski-long.ogg')
 afterski_short = os.path.join(dir, '../afterski-short.ogg')
+nairn = os.path.join(dir, '../nairn2.ogg')
 
 with open(filename, 'r') as tokenfile:
     bot.run(tokenfile.read().replace('\n', ''))
