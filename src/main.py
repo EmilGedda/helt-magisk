@@ -23,7 +23,8 @@ async def on_ready():
 async def on_message(message):
     if (message.content.startswith('!magisk') or
         message.content.startswith('!heltmagisk') or 
-        message.content.startswith('!nairn')):
+        message.content.startswith('!nairn') or
+        message.content.startswith('!druggo')):
 
         chan = message.author.voice_channel
         now = datetime.datetime.now()
@@ -32,10 +33,12 @@ async def on_message(message):
 
         voice = await bot.join_voice_channel(chan)
         song = afterski_short
-
-        if (message.content.startswith('!nairn')):
+    
+        if (message.content.startswith('!druggo')):
+            song = druggo
+        elif (message.content.startswith('!nairn')):
             song = nairn
-        if (message.content.startswith('!heltmagisk')):
+        elif (message.content.startswith('!heltmagisk')):
             song = afterski_long
 
         event = threading.Event()
@@ -61,6 +64,7 @@ filename = os.path.join(dir, '../.bot-token')
 afterski_long = os.path.join(dir, '../afterski-long.ogg')
 afterski_short = os.path.join(dir, '../afterski-short.ogg')
 nairn = os.path.join(dir, '../nairn2.ogg')
+druggo = os.path.join(dir, '../druggo.ogg')
 
 with open(filename, 'r') as tokenfile:
     bot.run(tokenfile.read().replace('\n', ''))
