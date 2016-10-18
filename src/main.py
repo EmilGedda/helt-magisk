@@ -3,10 +3,12 @@ import discord
 import os
 import subprocess
 import threading
+import random
 
 bot = discord.Client()
 name = 'helt-magisk'
 ver = '0.1.0'
+FNULL =open(os.devnull, 'w')
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('opus')
@@ -14,57 +16,54 @@ if not discord.opus.is_loaded():
 @bot.event
 async def on_ready():
     print('Starting {} v{}...'.format(name, ver))
-    print('------')
+    print('Copyright (C) 2016 Emil Gedda')
     print('User: ' + bot.user.name)
     print('ID:   ' + bot.user.id)
-    print('------')
+    indexsounds()
+    print('Loaded sounds...')
 
 @bot.event
-async def on_message(message):
-    if (message.content.startswith('!magisk') or
-        message.content.startswith('!heltmagisk') or 
-        message.content.startswith('!nairn') or
-        message.content.startswith('!druggo')):
+async def on_message(messageobj):
+    message = messageobj.content[1:]
+    if message not in sounds:
+        return
 
-        chan = message.author.voice_channel
-        now = datetime.datetime.now()
-        print('[{}:{}:{}] Summoned by {}'.format(spad(now.hour),
-                spad(now.minute), spad(now.second), message.author.name))
+    chan = messageobj.author.voice_channel
+    now = datetime.datetime.now()
+    voice = await bot.join_voice_channel(chan)
+    song = random.choice(sounds[message])
 
-        voice = await bot.join_voice_channel(chan)
-        song = afterski_short
-    
-        if (message.content.startswith('!druggo')):
-            song = druggo
-        elif (message.content.startswith('!nairn')):
-            song = nairn
-        elif (message.content.startswith('!heltmagisk')):
-            song = afterski_long
+    print('[{:02d}:{:02d}:{:02d}] {} played {}'.format(now.hour,
+        now.minute, now.second, messageobj.author.name, song))
 
-        event = threading.Event()
-        player = voice.create_ffmpeg_player(
-                song, after=lambda: event.set())
-        player.start()
+    event = threading.Event()
+    player = voice.create_ffmpeg_player(
+            song, after=lambda: event.set(),
+            stderr=FNULL)
+    player.start()
 
-        try:
-            await bot.delete_message(message)
-        except:
-            print('Unable to delete message!')
+    try:
+        await bot.delete_message(messageobj)
+    except:
+        print('Unable to delete message!')
 
-        event.wait()
-        await voice.disconnect()
+    event.wait()
+    await voice.disconnect()
 
-def spad(s):
-    if (s < 10):
-        return '0' + str(s)
-    return str(s)
+def indexsounds():
+    abspath = lambda d,f: list(map(lambda a: os.path.join(d, a), f))
+    for root, category, files in os.walk(soundsdir):
+        oggs = list(filter(lambda x: x.endswith('.ogg'), files))
+        if not oggs:
+            continue
+        sounds[os.path.basename(root)] = abspath(root, oggs)
+        for sound in oggs:
+            sounds[os.path.splitext(sound)[0]] = abspath(root, [sound])
 
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, '../.bot-token')
-afterski_long = os.path.join(dir, '../afterski-long.ogg')
-afterski_short = os.path.join(dir, '../afterski-short.ogg')
-nairn = os.path.join(dir, '../nairn2.ogg')
-druggo = os.path.join(dir, '../druggo.ogg')
+soundsdir = os.path.join(dir, '../sounds')
+sounds = dict()
 
 with open(filename, 'r') as tokenfile:
     bot.run(tokenfile.read().replace('\n', ''))
