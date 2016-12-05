@@ -59,7 +59,7 @@ def indexsounds():
             continue
         sounds[os.path.basename(root)] = abspath(root, oggs)
         for sound in oggs:
-            sounds[os.path.splitext(sound)[0]] = abspath(root, [sound])
+            sounds[unicode(os.path.splitext(sound)[0], "utf-8")] = abspath(root, [sound])
 
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, '../.bot-token')
