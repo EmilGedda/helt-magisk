@@ -25,14 +25,13 @@ async def on_ready():
 @bot.event
 async def on_message(messageobj):
     message = messageobj.content[1:]
-
+    now = datetime.datetime.now()
     if message not in sounds:
         print('[{:02d}:{:02d}:{:02d}] {} tried to play played {}'.format(now.hour,
         now.minute, now.second, messageobj.author.name, message))
         return
 
     chan = messageobj.author.voice_channel
-    now = datetime.datetime.now()
     voice = await bot.join_voice_channel(chan)
     song = random.choice(sounds[message])
 
