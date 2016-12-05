@@ -48,6 +48,7 @@ async def on_message(messageobj):
         print('Unable to delete message!')
 
     event.wait()
+    sleep(0.05)
     await voice.disconnect()
 
 def indexsounds():
