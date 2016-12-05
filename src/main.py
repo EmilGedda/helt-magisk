@@ -60,9 +60,13 @@ def indexsounds():
         oggs = list(filter(lambda x: x.endswith('.ogg'), files))
         if not oggs:
             continue
+        print("Found folder: {} => {}".format(os.path.basename(root), abspath(root, oggs)))
+
         sounds[os.path.basename(root)] = abspath(root, oggs)
         for sound in oggs:
-            sounds[unicode(os.path.splitext(sound)[0], "utf-8")] = abspath(root, [sound])
+            print("Found sound: {} => {}".format(os.path.splitext(sound)[0], abspath(root, [sound])))
+
+            sounds[os.path.splitext(sound)[0]] = abspath(root, [sound])
 
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, '../.bot-token')
