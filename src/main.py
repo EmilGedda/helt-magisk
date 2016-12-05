@@ -25,7 +25,10 @@ async def on_ready():
 @bot.event
 async def on_message(messageobj):
     message = messageobj.content[1:]
+
     if message not in sounds:
+        print('[{:02d}:{:02d}:{:02d}] {} tried to play played {}'.format(now.hour,
+        now.minute, now.second, messageobj.author.name, message))
         return
 
     chan = messageobj.author.voice_channel
