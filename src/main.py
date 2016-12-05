@@ -1,4 +1,5 @@
 import datetime
+import time
 import discord
 import os
 import subprocess
@@ -51,7 +52,7 @@ async def on_message(messageobj):
         print('Unable to delete message!')
 
     event.wait()
-    sleep(0.05)
+    sleep(0.1)
     await voice.disconnect()
 
 def indexsounds():
