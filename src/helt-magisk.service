@@ -1,0 +1,10 @@
+[Unit]
+Description=Helt magisk discord bot
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 -u /home/%i/dev/helt-magisk/src/main.py
+User=%i
+
+[Install]
+WantedBy=multi-user.target

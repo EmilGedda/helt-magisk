@@ -1,4 +1,5 @@
 import datetime
+import time
 import discord
 import os
 import subprocess
@@ -24,10 +25,13 @@ async def on_ready():
 
 @bot.event
 async def on_message(messageobj):
-    message = messageobj.content[1:].encode("utf-8")
+    if messageobj.content[0] != "!":
+        return
+
+    message = messageobj.content[1:]
     now = datetime.datetime.now()
     if message not in sounds:
-        print('[{:02d}:{:02d}:{:02d}] {} tried to play played {}'.format(now.hour,
+        print('[{:02d}:{:02d}:{:02d}] {} tried to play {}'.format(now.hour,
         now.minute, now.second, messageobj.author.name, message))
         return
 
@@ -50,6 +54,7 @@ async def on_message(messageobj):
         print('Unable to delete message!')
 
     event.wait()
+    time.sleep(0.1)
     await voice.disconnect()
 
 def indexsounds():
